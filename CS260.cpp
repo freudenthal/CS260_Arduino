@@ -364,21 +364,24 @@ void CS260::CheckSerial()
 		uint32_t TimeDifference = micros()  - TransmitTime;
 		if(_HardwareSerial->available() > 0)
 		{
-			char Character = (char)_HardwareSerial->read();
-			switch (CurrentRecievingPart)
+			while (_HardwareSerial->available() > 0)
 			{
-				case RecievingPart::Echo:
-					//Serial.print("$");
-					//Serial.print(Character);
-					ParseEcho(Character);
-					break;
-				case RecievingPart::Value:
-					//Serial.print("^");
-					//Serial.print(Character);
-					ParseValue(Character);
-					break;
-				default:
-					break;
+				char Character = (char)_HardwareSerial->read();
+				switch (CurrentRecievingPart)
+				{
+					case RecievingPart::Echo:
+						//Serial.print("$");
+						//Serial.print(Character);
+						ParseEcho(Character);
+						break;
+					case RecievingPart::Value:
+						//Serial.print("^");
+						//Serial.print(Character);
+						ParseValue(Character);
+						break;
+					default:
+						break;
+				}
 			}
 		}
 		else if ( ( (!CheckWavelength) && ( TimeDifference > TimeOut ) ) || ( TimeDifference > (TimeOut*5) ) )
