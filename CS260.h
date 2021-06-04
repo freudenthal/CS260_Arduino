@@ -3,8 +3,6 @@
 
 #include "Arduino.h"
 
-typedef void ( *FinishedListener )();
-
 class CS260
 {
 	public:
@@ -55,6 +53,7 @@ class CS260
 			ReplyValue Value;
 			ReplyValueType ValueType;
 		};
+		typedef void ( *FinishedListener )(CS260::CommandsType);
 		CS260(HardwareSerial* serial); //Invoke with CS260(&SerialN);
 		~CS260();
 		bool SendAbort();
@@ -71,6 +70,7 @@ class CS260
 		bool IsBusy();
 		void CheckSerial();
 		float GetCurrentWavelength();
+		uint8_t GetCurrentGrating();
 	private:
 		HardwareSerial* _HardwareSerial;
 		RecievingPart CurrentRecievingPart;
@@ -88,6 +88,7 @@ class CS260
 		char* IntFloatBuffer;
 		float CurrentWavelength;
 		bool CheckWavelength;
+		uint8_t CurrentGrating;
 		uint8_t IntToCharPointer(uint8_t Input, char* Buffer, size_t BufferSize);
 		uint8_t FloatToCharPointer(float Input, char* Buffer, size_t BufferSize);
 		uint8_t CharPointerToInt(char* Buffer, size_t BufferSize);

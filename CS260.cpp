@@ -31,7 +31,7 @@ CS260::CS260(HardwareSerial *serial)
 	CurrentRecievingPart = RecievingPart::Echo;
 	ReplyBuffer = new char[ReplyBufferSize]();
 	IntFloatBuffer = new char[IntFloatBufferSize]();
-	RecievedCallback = 0;
+	RecievedCallback = NULL;
 	ReplyBufferIndex = 0;
 	CommandRetries = 0;
 	TransmitTime = 0;
@@ -121,6 +121,7 @@ bool CS260::SendSetGrating(uint8_t GratingNumber)
 		CurrentCommand.Type = TransmissionType::Set;
 		CurrentCommand.Value.IntegerValue = GratingNumber;
 		CurrentCommand.ValueType = CommandValueType::Integer;
+		CurrentGrating = GratingNumber;
 		return SendCurrentCommand();
 	}
 	else
@@ -536,6 +537,10 @@ float CS260::GetCurrentWavelength()
 {
 	return CurrentWavelength;
 }
+uint8_t CS260::GetCurrentGrating()
+{
+	return CurrentGrating;
+}
 void CS260::CheckReply()
 {
 	ExpectReply = false;
@@ -590,6 +595,10 @@ void CS260::CheckReply()
 					return;
 				}
 			}
+			else if (CurrentReply.Command == CommandsType::Grat)
+			{
+				CurrentGrating = CurrentReply.Value.IntegerValue;
+			}
 			else
 			{
 				CurrentWavelength = CurrentReply.Value.FloatValue;
@@ -599,7 +608,7 @@ void CS260::CheckReply()
 		CommandRetries = 0;
 		if (RecievedCallback)
 		{
-			RecievedCallback();
+			RecievedCallback(CurrentReply.Command);
 		}
 	}
 }
