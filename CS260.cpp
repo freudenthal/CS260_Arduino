@@ -364,7 +364,7 @@ void CS260::CheckSerial()
 		uint32_t TimeDifference = micros()  - TransmitTime;
 		if(_HardwareSerial->available() > 0)
 		{
-			while (_HardwareSerial->available() > 0)
+			while ( (_HardwareSerial->available() > 0) && ExpectReply )
 			{
 				char Character = (char)_HardwareSerial->read();
 				switch (CurrentRecievingPart)
